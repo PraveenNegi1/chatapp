@@ -1,9 +1,8 @@
+import 'package:chatapp/screens/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'home_screen.dart';
-import 'register_screen.dart';   // or login_screen.dart - your choice
-
 class AuthWrapper extends StatelessWidget {
   const AuthWrapper({super.key});
 
@@ -18,13 +17,11 @@ class AuthWrapper extends StatelessWidget {
           );
         }
 
-        // When logged in → go to HomeScreen (chat app user list)
         if (snapshot.hasData) {
-          return const HomeScreen();
+          return const HomeScreen();  // User is logged in
         }
 
-        // Not logged in → start with Register (your preference)
-        return const RegisterScreen();
+        return const LoginScreen();  // User is not logged in
       },
     );
   }

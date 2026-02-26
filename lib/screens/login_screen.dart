@@ -27,11 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-      // ────────────────────────────────────────────────────────────────
-      // IMPORTANT: Do NOT add Navigator.push / pushReplacement here
-      // The AuthWrapper (root widget) will automatically navigate to HomeScreen
-      // when authStateChanges() detects the user is logged in
-      // ────────────────────────────────────────────────────────────────
+      // DO NOT navigate manually. AuthWrapper will detect login and rebuild automatically.
     } on FirebaseAuthException catch (e) {
       String message;
       switch (e.code) {
@@ -60,64 +56,134 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Log In')),
+      backgroundColor: Colors.grey[100],
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextField(
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // App Logo / Icon
+                CircleAvatar(
+                  radius: 50,
+                  backgroundColor: Colors.blueAccent,
+                  child: const Icon(
+                    Icons.chat_bubble_outline,
+                    size: 50,
+                    color: Colors.white,
+                  ),
                 ),
-                keyboardType: TextInputType.emailAddress,
-                textInputAction: TextInputAction.next,
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _passwordController,
-                decoration: const InputDecoration(
-                  labelText: 'Password',
-                  border: OutlineInputBorder(),
+                const SizedBox(height: 24),
+
+                // Title
+                const Text(
+                  'Welcome Back',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
                 ),
-                obscureText: true,
-                textInputAction: TextInputAction.done,
-                onSubmitted: (_) => _login(),
-              ),
-              if (_error != null) ...[
+                const SizedBox(height: 8),
+                const Text(
+                  'Log in to your account',
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                ),
+                const SizedBox(height: 32),
+
+                // Email TextField
+                TextField(
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  textInputAction: TextInputAction.next,
+                  decoration: InputDecoration(
+                    prefixIcon: const Icon(Icons.email_outlined),
+                    labelText: 'Email',
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 16),
-                Text(
-                  _error!,
-                  style: const TextStyle(color: Colors.red),
-                  textAlign: TextAlign.center,
+
+                // Password TextField
+                TextField(
+                  controller: _passwordController,
+                  obscureText: true,
+                  textInputAction: TextInputAction.done,
+                  onSubmitted: (_) => _login(),
+                  decoration: InputDecoration(
+                    prefixIcon: const Icon(Icons.lock_outline),
+                    labelText: 'Password',
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+
+                // Error message
+                if (_error != null) ...[
+                  const SizedBox(height: 16),
+                  Text(
+                    _error!,
+                    style: const TextStyle(color: Colors.red),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+
+                const SizedBox(height: 32),
+
+                // Login button
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: _isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : ElevatedButton(
+                          onPressed: _login,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                          child: const Text(
+                            'Log In',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // Sign up redirect
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const RegisterScreen()),
+                    );
+                  },
+                  child: const Text(
+                    "Don't have an account? Sign up",
+                    style: TextStyle(fontSize: 16),
+                  ),
                 ),
               ],
-              const SizedBox(height: 32),
-              _isLoading
-                  ? const CircularProgressIndicator()
-                  : SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: _login,
-                        child: const Text('Log In'),
-                      ),
-                    ),
-              const SizedBox(height: 16),
-              TextButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (_) => const RegisterScreen()),
-                  );
-                },
-                child: const Text("Don't have an account? Sign up"),
-              ),
-            ],
+            ),
           ),
         ),
       ),

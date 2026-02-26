@@ -1,7 +1,6 @@
-import 'package:firebase_core/firebase_core.dart';
+import 'package:chatapp/screens/auth_wrapper.dart';
 import 'package:flutter/material.dart';
-
-import 'screens/auth_wrapper.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,13 +14,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
       title: 'Chat App',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        useMaterial3: true,
-      ),
-      home: const AuthWrapper(),   // ← this must be here
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: const AuthWrapper(),  // << important
     );
   }
 }
