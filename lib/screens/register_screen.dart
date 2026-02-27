@@ -1,3 +1,4 @@
+import 'package:chatapp/screens/complete_profile_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -52,10 +53,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
       );
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const LoginScreen()),
-      );
+   Navigator.pushReplacement(
+  context,
+  MaterialPageRoute(
+    builder: (_) => CompleteProfileScreen(userId: user.uid),
+  ),
+);
     } on FirebaseAuthException catch (e) {
       String message = e.message ?? 'Registration failed';
       switch (e.code) {
